@@ -3,10 +3,12 @@ package com.example.demo;
 import com.example.demo.model.Cell;
 import com.example.demo.model.Labyrinthe;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class MainController {
@@ -16,6 +18,9 @@ public class MainController {
 
     @FXML
     private Button generateButton;
+
+    @FXML
+    private VBox container;
 
     @FXML
     private Canvas mazeCanvas;
@@ -31,6 +36,7 @@ public class MainController {
             int mazeSize = Integer.parseInt(sizeInput.getText());
             Labyrinthe maze = new Labyrinthe(mazeSize);
             drawMaze(maze);
+            this.container.setMargin(mazeCanvas, new Insets(0, 0, 0, 50));
         } catch (NumberFormatException ex) {
             System.out.println("Please enter a valid integer for maze size.");
         }
