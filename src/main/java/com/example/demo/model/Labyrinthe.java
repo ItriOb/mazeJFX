@@ -86,6 +86,8 @@ public class Labyrinthe {
                 this.cellsStack.add(ongoing);
                 this.removeWall(ongoing,next);
                 ongoing=next;
+                // you have to do something like this for each algorithm of solving in order to draw it
+                ongoing.setPath(true);
             }
             else if(!cellsStack.isEmpty()){
                 Cell next = this.cellsStack.get(this.cellsStack.size()-1);
@@ -120,5 +122,34 @@ public class Labyrinthe {
         }
     }
 
+    public Cell getEntry() {
+        return entry;
+    }
 
+    public Cell getExit() {
+        return exit;
+    }
+
+    public void rightHandAlgorithm(){
+        String whichWall = "";
+        int i = entry.getX();
+        int j = entry.getY();
+        cells[i][j].setPathRightHand(true);
+        if(cells[i][j].hasBottomWall()){
+            if(cells[i][j].hasRightWall()){
+                i--;
+                whichWall = "RightWall";
+            }else {
+                j++;
+                whichWall = "BottomWall";
+            }
+        }else{
+            i++;
+        }
+        while( i != exit.getX() && j != exit.getY()){
+
+        }
+
+
+    }
 }

@@ -12,6 +12,10 @@ public class Cell {
     private boolean checked=false;// etat de le carre; visite ou non
     private boolean[] walls={true,true,true,true}; //murs qui entourent le carre
     ArrayList<Cell> neighbors =new ArrayList<>();
+    private boolean isPath=false;
+    private boolean pathRightHand = false;
+
+
 
     public Cell(int row, int column) {
         this.volume =40;
@@ -119,4 +123,36 @@ public class Cell {
     public boolean getWall(int index){
         return this.walls[index];
     }
+
+    public void setPath(boolean path) {
+        this.isPath = path;
+    }
+
+    public boolean getIsPath(){
+        return isPath;
+    }
+
+    public boolean hasTopWall(){
+        return walls[0];
+    }
+
+    public boolean hasRightWall(){
+        return walls[1];
+    }
+
+    public boolean hasBottomWall(){
+        return walls[2];
+    }
+
+    public boolean hasLeftWall(){
+        return walls[3];
+    }
+    public boolean isPathRightHand() {
+        return pathRightHand;
+    }
+
+    public void setPathRightHand(boolean pathRightHand) {
+        this.pathRightHand = pathRightHand;
+    }
+
 }

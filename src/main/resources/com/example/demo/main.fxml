@@ -6,16 +6,19 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.canvas.Canvas?>
 
-<VBox xmlns="http://javafx.com/javafx"
-      xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.demo.MainController">
+<?import javafx.scene.control.ScrollPane?>
+<ScrollPane xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.MainController">
+    <VBox>
 
-    <Label text="Enter Maze Size:" />
-    <TextField fx:id="sizeInput" />
-    <Button text="Generate Labyrinthe" onAction="#handleGenerateButtonClick" />
-    <VBox fx:id="container" spacing="10">
-        <Canvas fx:id="mazeCanvas" width="400" height="400" />
+        <Label text="Enter Maze Size:" />
+        <TextField fx:id="sizeInput" />
+        <Button text="Generate Labyrinthe" onAction="#handleGenerateButtonClick" />
+        <VBox fx:id="container" spacing="10">
+            <Canvas fx:id="mazeCanvas" width="400" height="400"/>
+        </VBox>
+
+
     </VBox>
 
-
-</VBox>
+</ScrollPane>
