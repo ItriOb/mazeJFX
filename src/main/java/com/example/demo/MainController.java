@@ -8,12 +8,20 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
+import javafx.scene.input.KeyEvent;
+
+import java.util.ArrayList;
 
 public class MainController {
+
+    @FXML
+    private StackPane stackPane;
 
     @FXML
     private TextField sizeInput;
@@ -30,12 +38,17 @@ public class MainController {
     private double scaleValue = 1.0;
     private double scaleFactor = 0.1;
 
+    private int playerRow;
+    private int playerColumn;
+
     private Labyrinthe maze;
 
     @FXML
     private void initialize() {
         // You can perform additional initialization here
 //        mazeCanvas.setOnScroll(this::handleScroll);
+
+        mazeCanvas.setOnKeyReleased(event -> handleKeyPress(event));
     }
 
 
@@ -46,11 +59,91 @@ public class MainController {
             int mazeSize = Integer.parseInt(sizeInput.getText());
             this.maze = new Labyrinthe(mazeSize);
             this.container.setMargin(mazeCanvas, new Insets(50, 0, 0, 50));
+            playerRow=  this.maze.getEntry().getX();
+            System.out.println("This is player row : "+this.maze.getEntry().getRow());
+            playerColumn = this.maze.getEntry().getY();
+            System.out.println("This is player column : "+this.maze.getEntry().getColumn());
+//            maze.bfs();
             drawMaze(this.maze);
+            mazeCanvas.requestFocus();
         } catch (NumberFormatException ex) {
             System.out.println("Please enter a valid integer for maze size.");
         }
     }
+
+
+
+    @FXML
+    private void handleKeyPress(KeyEvent event) {
+        if(event.getEventType() == KeyEvent.KEY_PRESSED){
+
+        KeyCode keyCode = event.getCode();
+        switch (keyCode) {
+            case W:
+                System.out.println("up");
+                movePlayer(-1, 0);  // Move up, wall index for top wall
+                break;
+            case S:
+                System.out.println("down");
+                movePlayer(1, 0);   // Move down, wall index for bottom wall
+                break;
+            case A:
+                System.out.println("left");
+                movePlayer(0, -1);  // Move left, wall index for left wall
+                break;
+            case D:
+                System.out.println("right");
+                movePlayer(0, 1);   // Move right, wall index for right wall
+                break;
+        }
+        }
+    }
+
+    private void movePlayer(int rowChange, int columnChange) {
+        System.out.println("initial row : "+playerRow+" initial column : "+playerColumn);
+        int newRow = playerRow + rowChange;
+        int newColumn = playerColumn + columnChange;
+
+
+
+        int wallIndex =0;
+        if(rowChange==-1 && columnChange==0){
+            wallIndex = 0;
+        }else if (rowChange==0&&columnChange==1){
+            wallIndex = 1;
+        }else if(rowChange ==1&& columnChange==0) {
+            wallIndex = 2;
+        }else if(rowChange==0&&columnChange==-1){
+            wallIndex = 3;
+        }
+
+
+        if (isValidMove(newRow, newColumn,wallIndex)) {
+            // Update player position
+            playerRow = newRow;
+            playerColumn = newColumn;
+            System.out.println("This is row : "+playerRow+" This is column : "+playerColumn);
+
+
+
+            // Redraw the maze
+            drawMaze(maze);
+        }
+    }
+
+    private boolean isValidMove(int row, int column, int wallIndex) {
+
+
+        System.out.println("is ValidMove row : "+row+" is ValidMove column : "+column);
+
+        if(row >= 0 && row < maze.getSize() &&
+                column >= 0 && column < maze.getSize() &&
+                !maze.getCell(row, column).getWall(wallIndex)){
+            System.out.println("this wall : "+wallIndex);
+            return true;
+        }else return false;
+    }
+
 
     private void drawMaze(Labyrinthe maze) {
         GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
@@ -58,6 +151,8 @@ public class MainController {
         if(cellSize<=0){
             return;
         }
+
+        gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
 
         double canvasSize = maze.getSize() * cellSize;
         mazeCanvas.setWidth(canvasSize);
@@ -70,25 +165,70 @@ public class MainController {
         for (int i = 0; i < maze.getSize(); i++) {
             for (int j = 0; j < maze.getSize(); j++) {
                 Cell cell = maze.getCell(i, j);
+                System.out.println("This is i : "+cell.getRow()+" This is j : "+cell.getColumn());
+                System.out.println("This is x : "+cell.getX()+" This is y : "+cell.getY());
+
                 gc.setLineWidth(1);
 
+                double x = cell.getX() * cellSize;
+                double y = cell.getY() * cellSize;
 
-                if (cell.getWall(0)) {
-                    gc.strokeLine(i * cellSize, j * cellSize, (i + 1) * cellSize, j * cellSize);
+
+                if (cell.hasTopWall()) {
+                    gc.strokeLine(x, y, x + cellSize, y);
+                }
+                if (cell.hasRightWall()) {
+                    gc.strokeLine(x + cellSize, y, x + cellSize, y + cellSize);
+                }
+                if (cell.hasBottomWall()) {
+                    gc.strokeLine(x, y + cellSize, x + cellSize, y + cellSize);
+                }
+                if (cell.hasLeftWall()) {
+                    gc.strokeLine(x, y, x, y + cellSize);
                 }
 
-                if (cell.getWall(1)) {
-                    gc.strokeLine((i + 1) * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize);
+//                if (cell.isPath()) {
+//                    gc.setFill(javafx.scene.paint.Color.BLUE);
+//                    gc.fillRect(x, y, cellSize, cellSize);
+//                }
+//
+//
+//                if (cell.getWall(0)) {
+//                    gc.strokeLine(i * cellSize, j * cellSize, (i + 1) * cellSize, j * cellSize);
+//                }
+//
+//                if (cell.getWall(1)) {
+//                    gc.strokeLine((i + 1) * cellSize, j * cellSize, (i + 1) * cellSize, (j + 1) * cellSize);
+//                }
+//
+//                if (cell.getWall(2)) {
+//                    gc.strokeLine(i * cellSize, (j + 1) * cellSize, (i + 1) * cellSize, (j + 1) * cellSize);
+//                }
+//
+//
+//                if (cell.getWall(3)) {
+//                    gc.strokeLine(i * cellSize, j * cellSize, i* cellSize, (j + 1) * cellSize);
+//                }
+
+                if (i == playerRow&& j == playerColumn) {
+                    gc.setFill(Color.RED);  // You can choose a color for the player marker
+                    gc.fillOval(i* cellSize, j * cellSize, cellSize, cellSize);
+                    gc.setFill(Color.BLACK);  // Reset the fill color
                 }
 
-                if (cell.getWall(2)) {
-                    gc.strokeLine(i * cellSize, (j + 1) * cellSize, (i + 1) * cellSize, (j + 1) * cellSize);
+                if ( playerRow == maze.getExit().getRow() && playerColumn==maze.getExit().getColumn() && i == playerRow && j == playerColumn) {
+                    gc.setFill(Color.GREEN);  // You can choose a color for the player marker
+                    gc.fillOval(i * cellSize, j * cellSize, cellSize, cellSize);
+                    gc.setFill(Color.BLACK);  // Reset the fill color
                 }
 
 
-                if (cell.getWall(3)) {
-                    gc.strokeLine(i * cellSize, j * cellSize, i* cellSize, (j + 1) * cellSize);
-                }
+//                if (cell.isPathBfs()){
+//                    gc.setFill(Color.LIGHTBLUE);  // You can choose a color for the path
+//                    gc.fillOval(i * cellSize, j * cellSize, cellSize, cellSize);
+//                    gc.setFill(Color.BLACK);  // Reset the fill color
+//                }
+
 
 
 //                if (cell.getIsPath() && cell!=maze.getEntry() && cell!=maze.getExit()) {
@@ -120,6 +260,25 @@ public class MainController {
             return 0.0;  // Default size if maze size is zero (or negative, though that should not happen)
         }
     }
+
+    private void solveRightHand(){
+        Cell currentCell = this.maze.getEntry();
+        String direction = "";
+        String[] directions= {"north","est","south","west"};
+        while(currentCell!=this.maze.getExit()){
+            if(direction=="north"){
+
+            }
+        }
+    }
+
+
+
+
+    //give me a method that solves this algorithm using right hand rule
+
+
+
 
 
 //    private void handleScroll(ScrollEvent event) {

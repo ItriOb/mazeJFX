@@ -2,8 +2,7 @@ package com.example.demo.model;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public class Labyrinthe {
     private int size;//taille du labyrinthe
@@ -14,6 +13,8 @@ public class Labyrinthe {
     private Stack<Cell> cellsStack ;// pile qui stock le chemin du labyrinthe
     private Cell entry;//entree du labyrinthe
     private Cell exit;//sortie du labyrinthe
+    private List<Cell> shortestPath = new ArrayList<>();
+
 
     public Labyrinthe(int size) {
         this.size = size;
@@ -50,7 +51,6 @@ public class Labyrinthe {
         this.ongoing.setChecked(true);
 
         createPath(this.ongoing);
-
     }
 
 
@@ -88,6 +88,7 @@ public class Labyrinthe {
                 ongoing=next;
                 // you have to do something like this for each algorithm of solving in order to draw it
                 ongoing.setPath(true);
+                shortestPath.add(ongoing);
             }
             else if(!cellsStack.isEmpty()){
                 Cell next = this.cellsStack.get(this.cellsStack.size()-1);
@@ -95,6 +96,10 @@ public class Labyrinthe {
                 ongoing=next;
             }
         }while(!this.cellsStack.isEmpty());
+
+        for(Cell cell : shortestPath) {
+            cell.setPathBfs(true);
+        }
     }
 
     public int getSize() {
@@ -130,26 +135,36 @@ public class Labyrinthe {
         return exit;
     }
 
-    public void rightHandAlgorithm(){
-        String whichWall = "";
-        int i = entry.getX();
-        int j = entry.getY();
-        cells[i][j].setPathRightHand(true);
-        if(cells[i][j].hasBottomWall()){
-            if(cells[i][j].hasRightWall()){
-                i--;
-                whichWall = "RightWall";
-            }else {
-                j++;
-                whichWall = "BottomWall";
-            }
-        }else{
-            i++;
-        }
-        while( i != exit.getX() && j != exit.getY()){
+//    public void bfs() {
+//        PriorityQueue<Cell> priorityQueue = new PriorityQueue<>((c1, c2) -> Integer.compare(c1.getDistance(), c2.getDistance()));
+//        entry.setDistance(0);
+//        priorityQueue.add(entry);
+//
+//        while (!priorityQueue.isEmpty()) {
+//            Cell current = priorityQueue.poll();
+//
+//            for (Cell neighbor : current.getNeighbors()) {
+//                int tentativeDistance = current.getDistance() + 1; // Assuming each step has a cost of 1
+//
+//                if (tentativeDistance < neighbor.getDistance()) {
+//                    neighbor.setDistance(tentativeDistance);
+//                    priorityQueue.add(neighbor);
+//                    neighbor.setPathBfs(true);
+//                }
+//            }
+//        }
+//    }
 
-        }
 
 
-    }
+
+
+
+
+
+
+
+
+
+
 }

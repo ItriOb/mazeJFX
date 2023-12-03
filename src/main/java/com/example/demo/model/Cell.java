@@ -13,15 +13,27 @@ public class Cell {
     private boolean[] walls={true,true,true,true}; //murs qui entourent le carre
     ArrayList<Cell> neighbors =new ArrayList<>();
     private boolean isPath=false;
-    private boolean pathRightHand = false;
+    private boolean pathBfs = false;
+
+    private int distance = Integer.MAX_VALUE;
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+
 
 
 
     public Cell(int row, int column) {
         this.volume =40;
         this.checked=false;
-        this.x=row* volume;
-        this.y=column* volume;
+        this.x=row;
+        this.y=column;
         this.row = row;
         this.column = column;
     }
@@ -147,12 +159,37 @@ public class Cell {
     public boolean hasLeftWall(){
         return walls[3];
     }
-    public boolean isPathRightHand() {
-        return pathRightHand;
+
+    public boolean isPathBfs() {
+        return pathBfs;
     }
 
-    public void setPathRightHand(boolean pathRightHand) {
-        this.pathRightHand = pathRightHand;
+    public void setPathBfs(boolean pathBfs) {
+        this.pathBfs = pathBfs;
+    }
+
+    public Cell getRightNeighbor(Cell previousCell) {
+        int currentIndex = neighbors.indexOf(previousCell);
+
+        if (neighbors.size() > 0) {
+            int rightIndex = (currentIndex + 1) % neighbors.size();
+            return neighbors.get(rightIndex);
+        } else {
+            // Handle the case when there are no neighbors
+            return null;
+        }
+    }
+
+    public Cell getLeftNeighbor(Cell previousCell) {
+        int currentIndex = neighbors.indexOf(previousCell);
+
+        if (neighbors.size() > 0) {
+            int leftIndex = (currentIndex - 1 + neighbors.size()) % neighbors.size();
+            return neighbors.get(leftIndex);
+        } else {
+            // Handle the case when there are no neighbors
+            return null;
+        }
     }
 
 }

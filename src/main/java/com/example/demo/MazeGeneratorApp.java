@@ -12,7 +12,7 @@ public class MazeGeneratorApp extends Application {
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setTitle("Maze Generator");
-        primaryStage.setScene(new Scene(root, 400, 300));
+        primaryStage.setScene(new Scene(root, 600, 600));
         primaryStage.show();
     }
 
