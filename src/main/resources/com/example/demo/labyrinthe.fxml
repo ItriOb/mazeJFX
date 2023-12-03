@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.canvas.Canvas?>
+
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.StackPane?>
+<ScrollPane  xmlns="http://javafx.com/javafx"
+           xmlns:fx="http://javafx.com/fxml" fx:id="stackPane" fx:controller="com.example.demo.MainController" onKeyPressed="#handleKeyPress">
+
+
+        <VBox fx:id="wrapper" spacing="20" >
+        <Label text="Entrez la taille du labyrinthe : " />
+        <TextField fx:id="sizeInput" />
+        <Button  text="Générer le labyrinthe" onAction="#handleGenerateButtonClick" />
+        <Button text="Trouver le chemin le plus court" onAction="#handleDrawBFSPath" />
+            <Button text="Jouer" onAction="#handleJouer" />
+        <VBox fx:id="container" spacing="10">
+            <Canvas fx:id="mazeCanvas" width="400" height="400"/>
+        </VBox>
+
+
+
+    </VBox>
+</ScrollPane>
+

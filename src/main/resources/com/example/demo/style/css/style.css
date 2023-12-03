@@ -1,0 +1,47 @@
+.alert {
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-size: 14px;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #76D7C4;
+}
+
+.dialog-pane .content-label {
+    -fx-text-fill: #1A5276;
+    -fx-font-weight: bold;
+}
+
+.button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-border-color: #2980B9;
+    -fx-border-radius: 5;
+}
+.dialog-pane {
+    -fx-background-color: linear-gradient(to bottom, #76D7C4, #117A65);
+    -fx-border-color: #1A5276;
+    -fx-border-radius: 10px;
+}
+
+.button {
+    -fx-background-color: #3498DB;
+    -fx-text-fill: white;
+    -fx-border-color: #2980B9;
+    -fx-border-radius: 5px;
+}
+
+.button:hover {
+    -fx-background-color: #1A5276;
+}
+
+.button:pressed {
+    -fx-background-color: #154360;
+}
+
+.content-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+}

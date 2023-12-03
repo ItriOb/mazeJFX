@@ -3,22 +3,26 @@ package com.example.demo;
 import com.example.demo.model.Cell;
 import com.example.demo.model.Labyrinthe;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainController {
 
     @FXML
-    private StackPane stackPane;
+    private ScrollPane scrollPane;
 
     @FXML
     private TextField sizeInput;
@@ -29,6 +33,8 @@ public class MainController {
     @FXML
     private VBox container;
 
+    @FXML private VBox wrapper;
+
     @FXML
     private Canvas mazeCanvas;
 
@@ -36,6 +42,7 @@ public class MainController {
     private int playerColumn;
 
     private Labyrinthe maze;
+    private boolean showPlayer = false;
 
     @FXML
     private void initialize() {
@@ -44,10 +51,14 @@ public class MainController {
     }
 
     @FXML
-    private void handleGenerateButtonClick() {
+    private void handleGenerateButtonClick() throws IOException {
+
+
+        showPlayer=false;
         try {
             int mazeSize = Integer.parseInt(sizeInput.getText());
             this.maze = new Labyrinthe(mazeSize);
+            VBox.setMargin(mazeCanvas, new Insets(50, 0, 0, 50));
             VBox.setMargin(mazeCanvas, new Insets(50, 0, 0, 50));
             playerRow = this.maze.getEntry().getRow();
             playerColumn = this.maze.getEntry().getColumn();
@@ -56,14 +67,27 @@ public class MainController {
         } catch (NumberFormatException ex) {
             System.out.println("Please enter a valid integer for maze size.");
         }
+
+
     }
 
     @FXML
     private void handleDrawBFSPath() {
+        showPlayer=false;
+
+
         if (maze != null) {
+
             List<Cell> path = maze.performBFS(); // Assuming performBFS returns the path from entry to exit
             drawPath(path);
         }
+    }
+    @FXML
+    private void handleJouer() {
+
+
+        showPlayer=true;
+        drawMaze(this.maze);
     }
 
     private void drawPath(List<Cell> path) {
@@ -135,7 +159,7 @@ public class MainController {
                 Cell cell = maze.getCell(i, j);
                 drawCell(gc, cell, cellSize);
 
-                if (i == playerRow && j == playerColumn) {
+                if (i == playerRow && j == playerColumn && showPlayer){
                     drawPlayer(gc, cellSize, i, j);
                 }
             }
@@ -143,13 +167,13 @@ public class MainController {
 
         // Draw entry
         Cell entryCell = maze.getEntry();
-        gc.setFill(Color.GREEN);
-        gc.fillRect(entryCell.getColumn() * cellSize, entryCell.getRow() * cellSize, cellSize, cellSize);
+//        gc.setFill(Color.GREEN);
+//        gc.fillRect(entryCell.getColumn() * cellSize, entryCell.getRow() * cellSize, cellSize, cellSize);
 
         // Draw exit
         Cell exitCell = maze.getExit();
-        gc.setFill(Color.RED);
-        gc.fillRect(exitCell.getColumn() * cellSize, exitCell.getRow() * cellSize, cellSize, cellSize);
+//        gc.setFill(Color.RED);
+//        gc.fillRect(exitCell.getColumn() * cellSize, exitCell.getRow() * cellSize, cellSize, cellSize);
     }
 
 
@@ -159,20 +183,49 @@ public class MainController {
         gc.setLineWidth(2);
 
         if (cell.hasTopWall()) gc.strokeLine(x, y, x + cellSize, y);
-        if (cell.hasRightWall()) gc.strokeLine(x + cellSize, y, x + cellSize, y + cellSize);
+        if (cell.hasRightWall() && cell!=maze.getExit()){
+            gc.strokeLine(x + cellSize, y, x + cellSize, y + cellSize);
+        }else if(cell==maze.getExit()){
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(5);
+            gc.strokeLine(x + cellSize, y, x + cellSize, y + cellSize);
+            gc.setLineWidth(2);
+            gc.setStroke(Color.BLACK);
+        }
         if (cell.hasBottomWall()) gc.strokeLine(x, y + cellSize, x + cellSize, y + cellSize);
-        if (cell.hasLeftWall()) gc.strokeLine(x, y, x, y + cellSize);
+        if (cell.hasLeftWall() && cell!=maze.getEntry()){
+            gc.strokeLine(x, y, x, y + cellSize);
+        }else if(cell==maze.getEntry()){
+            gc.setStroke(Color.GREEN);
+            gc.setLineWidth(5);
+            gc.strokeLine(x, y, x, y + cellSize);
+            gc.setStroke(Color.BLACK);
+            gc.setLineWidth(2);
+        }
     }
 
     private void drawPlayer(GraphicsContext gc, double cellSize, int row, int col) {
         double x = col * cellSize;
         double y = row * cellSize;
-        gc.setFill(Color.RED);
+        if (row == maze.getExit().getRow() && col == maze.getExit().getColumn()){
+            gc.setFill(Color.GREEN);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Félicitations");
+            alert.setHeaderText(null); // No header
+            alert.setContentText("Vous avez trouvé le chemin de sortie !");
+            DialogPane dialogPane = alert.getDialogPane();
+            dialogPane.getStylesheets().add(getClass().getResource("/com/example/demo/style/css/style.css").toExternalForm());
+            dialogPane.getStyleClass().add("myDialog");
+
+            alert.showAndWait();
+        }else gc.setFill(Color.RED);
+
         gc.fillOval(x, y, cellSize, cellSize);
     }
 
     private double calculateCellSize(Labyrinthe maze) {
         double canvasSize = Math.min(mazeCanvas.getWidth(), mazeCanvas.getHeight());
         return canvasSize / maze.getSize();
+
     }
 }
