@@ -7,6 +7,7 @@ import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public class MainController {
 
     @FXML
-    private StackPane stackPane;
+    private ScrollPane scrollPane;
 
     @FXML
     private TextField sizeInput;
@@ -77,23 +78,29 @@ public class MainController {
     private void handleKeyPress(KeyEvent event) {
         if(event.getEventType() == KeyEvent.KEY_PRESSED){
 
+            //D left bottom wall
+            //W up left wall
+            //S down right wall
+            //A right top wall
+
+
         KeyCode keyCode = event.getCode();
         switch (keyCode) {
             case W:
                 System.out.println("up");
-                movePlayer(-1, 0);  // Move up, wall index for top wall
+                movePlayer(0, -1);  // Move up, wall index for top wall
                 break;
             case S:
                 System.out.println("down");
-                movePlayer(1, 0);   // Move down, wall index for bottom wall
+                movePlayer(0, 1);   // Move down, wall index for bottom wall
                 break;
             case A:
                 System.out.println("left");
-                movePlayer(0, -1);  // Move left, wall index for left wall
+                movePlayer(-1, 0);  // Move left, wall index for left wall
                 break;
             case D:
                 System.out.println("right");
-                movePlayer(0, 1);   // Move right, wall index for right wall
+                movePlayer(1, 0);   // Move right, wall index for right wall
                 break;
         }
         }
@@ -110,12 +117,14 @@ public class MainController {
         if(rowChange==-1 && columnChange==0){
             wallIndex = 0;
         }else if (rowChange==0&&columnChange==1){
-            wallIndex = 1;
-        }else if(rowChange ==1&& columnChange==0) {
-            wallIndex = 2;
-        }else if(rowChange==0&&columnChange==-1){
             wallIndex = 3;
+        }else if(rowChange ==1&& columnChange==0) {
+            wallIndex = 1;
+        }else if(rowChange==0&&columnChange==-1){
+            wallIndex = 2;
         }
+
+        System.out.println("this is new Row : "+newRow+" this is new Column : "+newColumn+" and this is wall index : " + wallIndex);
 
 
         if (isValidMove(newRow, newColumn,wallIndex)) {
@@ -136,9 +145,14 @@ public class MainController {
 
         System.out.println("is ValidMove row : "+row+" is ValidMove column : "+column);
 
+        if(row >=0 && column>=0){
+            System.out.println("this cell is row : "+maze.getCell(column,row).getRow()+" this is column : "+maze.getCell(column,row).getColumn()+ " and wall index : "+wallIndex);
+
+        }
+
         if(row >= 0 && row < maze.getSize() &&
                 column >= 0 && column < maze.getSize() &&
-                !maze.getCell(row, column).getWall(wallIndex)){
+                !maze.getCell(column, row).getWall(wallIndex)){
             System.out.println("this wall : "+wallIndex);
             return true;
         }else return false;
@@ -160,13 +174,14 @@ public class MainController {
 
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
 
+
 //        mazeCanvas.getTransforms().add(new Scale(scaleValue, scaleValue));
+
+
 
         for (int i = 0; i < maze.getSize(); i++) {
             for (int j = 0; j < maze.getSize(); j++) {
                 Cell cell = maze.getCell(i, j);
-                System.out.println("This is i : "+cell.getRow()+" This is j : "+cell.getColumn());
-                System.out.println("This is x : "+cell.getX()+" This is y : "+cell.getY());
 
                 gc.setLineWidth(1);
 
@@ -177,12 +192,15 @@ public class MainController {
                 if (cell.hasTopWall()) {
                     gc.strokeLine(x, y, x + cellSize, y);
                 }
+
                 if (cell.hasRightWall()) {
                     gc.strokeLine(x + cellSize, y, x + cellSize, y + cellSize);
                 }
+
                 if (cell.hasBottomWall()) {
                     gc.strokeLine(x, y + cellSize, x + cellSize, y + cellSize);
                 }
+
                 if (cell.hasLeftWall()) {
                     gc.strokeLine(x, y, x, y + cellSize);
                 }
