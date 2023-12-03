@@ -15,6 +15,7 @@
         <Label text="Enter Maze Size:" />
         <TextField fx:id="sizeInput" />
         <Button text="Generate Labyrinthe" onAction="#handleGenerateButtonClick" />
+        <Button text="Draw Path with BFS" onAction="#handleDrawBFSPath" />
         <VBox fx:id="container" spacing="10">
             <Canvas fx:id="mazeCanvas" width="400" height="400"/>
         </VBox>

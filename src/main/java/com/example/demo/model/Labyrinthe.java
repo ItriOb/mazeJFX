@@ -3,6 +3,7 @@ package com.example.demo.model;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Stack;
+import java.util.*;
 
 public class Labyrinthe {
     private int size;
@@ -100,6 +101,70 @@ public class Labyrinthe {
             return cells[row][column];
         }
         return null; // Or throw an exception
+    }
+
+    public List<Cell> performBFS() {
+        Map<Cell, Cell> predecessorMap = new HashMap<>();
+        Queue<Cell> queue = new LinkedList<>();
+        Set<Cell> visited = new HashSet<>();
+
+        queue.add(entry);
+        visited.add(entry);
+
+        while (!queue.isEmpty()) {
+            Cell current = queue.poll();
+
+            if (current.equals(exit)) {
+                return reconstructPath(predecessorMap, exit);
+            }
+
+            for (Cell neighbor : getAccessibleNeighbors(current)) {
+                if (!visited.contains(neighbor)) {
+                    queue.add(neighbor);
+                    visited.add(neighbor);
+                    predecessorMap.put(neighbor, current);
+                }
+            }
+        }
+
+        return Collections.emptyList(); // Return an empty list if no path is found
+    }
+
+    private List<Cell> getAccessibleNeighbors(Cell cell) {
+        List<Cell> neighbors = new ArrayList<>();
+        int row = cell.getRow();
+        int col = cell.getColumn();
+
+        // Top neighbor
+        if (row > 0 && !cell.hasTopWall()) {
+            neighbors.add(cells[row - 1][col]);
+        }
+        // Right neighbor
+        if (col < size - 1 && !cell.hasRightWall()) {
+            neighbors.add(cells[row][col + 1]);
+        }
+        // Bottom neighbor
+        if (row < size - 1 && !cells[row + 1][col].hasTopWall()) {
+            neighbors.add(cells[row + 1][col]);
+        }
+        // Left neighbor
+        if (col > 0 && !cells[row][col - 1].hasRightWall()) {
+            neighbors.add(cells[row][col - 1]);
+        }
+
+        return neighbors;
+    }
+
+    private List<Cell> reconstructPath(Map<Cell, Cell> predecessorMap, Cell end) {
+        LinkedList<Cell> path = new LinkedList<>();
+        Cell current = end;
+
+        while (current != null) {
+            path.addFirst(current);
+            current = predecessorMap.get(current);
+        }
+
+        return path;
     }
 
     public int getSize() {

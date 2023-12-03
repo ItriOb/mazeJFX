@@ -13,6 +13,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.util.List;
+
 public class MainController {
 
     @FXML
@@ -53,6 +55,28 @@ public class MainController {
             mazeCanvas.requestFocus();
         } catch (NumberFormatException ex) {
             System.out.println("Please enter a valid integer for maze size.");
+        }
+    }
+
+    @FXML
+    private void handleDrawBFSPath() {
+        if (maze != null) {
+            List<Cell> path = maze.performBFS(); // Assuming performBFS returns the path from entry to exit
+            drawPath(path);
+        }
+    }
+
+    private void drawPath(List<Cell> path) {
+        GraphicsContext gc = mazeCanvas.getGraphicsContext2D();
+        double cellSize = calculateCellSize(maze);
+        double pathWidth = cellSize / 3; // Set the path to be one-third the cell size
+        double offset = (cellSize - pathWidth) / 2; // Offset to center the path within the cell
+
+        for (Cell cell : path) {
+            double x = cell.getColumn() * cellSize + offset;
+            double y = cell.getRow() * cellSize + offset;
+            gc.setFill(Color.BLUE); // Color for the BFS path
+            gc.fillRect(x, y, pathWidth, pathWidth); // Draw a smaller square for the path
         }
     }
 
