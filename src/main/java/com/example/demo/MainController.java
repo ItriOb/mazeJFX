@@ -58,20 +58,21 @@ public class MainController {
 
     @FXML
     private void handleKeyPress(KeyEvent event) {
-        System.out.println("Key pressed: " + event.getCode());  // Debugging line
-        switch (event.getCode()) {
-            case W:
-                movePlayer(-1, 0);
-                break;
-            case S:
-                movePlayer(1, 0);
-                break;
-            case A:
-                movePlayer(0, -1);
-                break;
-            case D:
-                movePlayer(0, 1);
-                break;
+        if(event.getEventType() == KeyEvent.KEY_PRESSED){
+            switch (event.getCode()) {
+                case W:
+                    movePlayer(-1, 0);
+                    break;
+                case S:
+                    movePlayer(1, 0);
+                    break;
+                case A:
+                    movePlayer(0, -1);
+                    break;
+                case D:
+                    movePlayer(0, 1);
+                    break;
+            }
         }
     }
 
@@ -109,12 +110,24 @@ public class MainController {
             for (int j = 0; j < maze.getSize(); j++) {
                 Cell cell = maze.getCell(i, j);
                 drawCell(gc, cell, cellSize);
+
                 if (i == playerRow && j == playerColumn) {
                     drawPlayer(gc, cellSize, i, j);
                 }
             }
         }
+
+        // Draw entry
+        Cell entryCell = maze.getEntry();
+        gc.setFill(Color.GREEN);
+        gc.fillRect(entryCell.getColumn() * cellSize, entryCell.getRow() * cellSize, cellSize, cellSize);
+
+        // Draw exit
+        Cell exitCell = maze.getExit();
+        gc.setFill(Color.RED);
+        gc.fillRect(exitCell.getColumn() * cellSize, exitCell.getRow() * cellSize, cellSize, cellSize);
     }
+
 
     private void drawCell(GraphicsContext gc, Cell cell, double cellSize) {
         double x = cell.getColumn() * cellSize;

@@ -80,8 +80,8 @@ public class Labyrinthe {
     }
 
     private void setEntryAndExit() {
-        entry = cells[0][rand.nextInt(size)];
-        exit = cells[size - 1][rand.nextInt(size)];
+        entry = cells[rand.nextInt(size)][0];
+        exit = cells[rand.nextInt(size)][size - 1];
     }
 
     private boolean hasUnvisitedCells() {
